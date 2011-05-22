@@ -1,0 +1,29 @@
+/* exp.css */
+
+body {
+    font-family: sans-serif;
+}
+
+#list table {
+    border-collapse: collapse;
+}
+
+#list td {
+    border: 1px solid grey;
+    padding: 2px 5px;
+}
+
+#status > p{
+    margin: 0;
+    padding: 7px;
+}
+
+#status .success {
+    color: #5CAD5C;
+    background: #E0F7DF;
+}
+
+#status .failure {
+    color: #CF6661;
+    background: #FFDDDB;
+}

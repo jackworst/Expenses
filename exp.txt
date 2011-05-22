@@ -1,0 +1,30 @@
+Expenses Tracking - Pet Project, Phase 0
+
+Goal:
+- Basic tracking and analysis tool for all personal expenses
+
+Features:
+- Offline data entry on mobile device, basic but efficient
+- Synchronization with server, one-way, manually triggered
+- Analysys, tabular stats for month & year
+- Export to Google Docs via CSV (if supported by Google)
+- Supports at least date, amount, category (fixed set), text (optional)
+- Editing only via direct db access
+- Server running on "mini2"
+
+Technology:
+- nodejs
+- mongodb
+- jquery
+
+
+----
+scratch area:
+
+to thinks about next time
+- try local git? (actually nothing to lose if it does not work)
+- introduce category all the way from ui to db
+- rudimentary monthly statistics
+- how to enable dev on home _and_ work machine? web repo?
+
+
