@@ -30,6 +30,7 @@ var handleSync = function(request, response) {
         expense.eid = data.eid
         expense.date = parseInt(data.date, 10);
         expense.amount = parseInt(data.amount, 10);
+        expense.category = data.category || "none";
         expense.text = data.text || "";
 
         withExpenses(function(expenses) {
