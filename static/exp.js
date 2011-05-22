@@ -46,6 +46,7 @@ var listExpenses = function(target) {
         var tr = $('<tr/>');
         tr.append($('<td/>').text(new Date(expense.date * 1000).toString()));
         tr.append($('<td/>').text(expense.amount));
+        tr.append($('<td/>').text(expense.category));
         tr.append($('<td/>').text(expense.text));
         var delLink = $('<a href="#">Delete</a>').click(function() {
             clearExpense(expense.eid);
@@ -67,6 +68,7 @@ $(document).ready(function() {
             eid: "" + new Date().getTime() + "_" + Math.random(), 
             date: Date.parse($("#when").val()) / 1000,
             amount: $("#howMuch").val(),
+            category: $("#category").val(),
             text: $("#what").val(),
         });
         resetFields();
