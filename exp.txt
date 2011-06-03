@@ -21,10 +21,9 @@ Technology:
 ----
 scratch area:
 
-to thinks about next time
-- try local git? (actually nothing to lose if it does not work)
-- introduce category all the way from ui to db
-- rudimentary monthly statistics
-- how to enable dev on home _and_ work machine? web repo?
+to think about next time:
+- yearly stats (month per row)
+- how to track time? android app?
 
-
+phase 1 notes:
+- mobile stats would be nice (at least "online")

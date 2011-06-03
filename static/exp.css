@@ -4,11 +4,11 @@ body {
     font-family: sans-serif;
 }
 
-#list table {
+table {
     border-collapse: collapse;
 }
 
-#list td {
+td {
     border: 1px solid grey;
     padding: 2px 5px;
 }
@@ -26,4 +26,15 @@ body {
 #status .failure {
     color: #CF6661;
     background: #FFDDDB;
+}
+
+#tooltip {
+    position: absolute;
+    background: #eee;
+    padding: 8px;
+    border: 1px solid grey;
+}
+
+#tooltip p {
+    margin: 0;
 }

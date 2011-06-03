@@ -3,6 +3,7 @@ var mongo = require('./lib/mongo-driver/node-mongodb-native/lib/mongodb');
 var fs = require("fs");
 
 var staticRe = /^\/static\/([\w\.]+)$/;
+var statsRe = /^\/stats\/(\d+)(\/(\d+))?$/;
 
 var db = new mongo.Db('test', new mongo.Server("127.0.0.1", 27017, {}));
 
@@ -47,6 +48,22 @@ var handleSync = function(request, response) {
     });
 };
 
+var handleStats = function(request, response, year, month) {
+    withExpenses(function(expenses) {
+        var start, end;
+        if (year && month) {
+            start = new Date(year, month, 1).getTime() / 1000;
+            end = new Date(year, month + 1, 1).getTime() / 1000;
+        } else {
+            start = new Date(year, 0, 1).getTime() / 1000;
+            end = new Date(year + 1, 0, 1).getTime() / 1000;            
+        }
+        expenses.find({date:{$gte: start, $lte: end}}).toArray(function(e, expenses) {
+            sendResponse(response, expenses);
+        });
+    });
+};
+
 var handleStatic = function(request, response, resource) {
     console.log("serving " + resource);
     fs.readFile("./static/" + resource, function (err, data) {
@@ -66,6 +83,9 @@ http.createServer(function (request, response) {
     console.log("----- " + request.connection.remoteAddress + " " + reqUrl.href + " -----");
     if (reqUrl.pathname === "/sync") {
         handleSync(request, response);
+    } else if (statsRe.test(reqUrl.pathname)) {
+        var match = statsRe.exec(reqUrl.pathname);
+        handleStats(request, response, match[1], match[3]);
     } else if (staticRe.test(reqUrl.pathname)) {
         handleStatic(request, response, staticRe.exec(reqUrl.pathname)[1]);
     } else {
