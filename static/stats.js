@@ -77,10 +77,6 @@ var getUrlParams = function() {
 
 var showExpenses = function(expenses, year, month) {
     var table = [];
-//    var days;
-//    if (month) {
-//        days = daysInMonth(month, year);
-//    }
     var rowCount = month ? daysInMonth(month, year) : 12;
     
     // init empty table
@@ -96,10 +92,8 @@ var showExpenses = function(expenses, year, month) {
             };
         }
     }
-    table.categorySums = [];
-    for (var col = 0; col < categories.length; col++) {
-        table.categorySums[col] = 0;
-    }
+    table.categorySums = categories.map(function(cat) {return 0});
+    table.rowSums = table.rows.map(function(cat) {return 0});
 
     // add labels
     table.rowLabels = [];
@@ -111,26 +105,41 @@ var showExpenses = function(expenses, year, month) {
             table.rowLabels[row] = (row + 1) + "." + year;
         }
     }
-    table.colLabels = [];
-    for (var col = 0; col < categories.length; col++) {
-        table.colLabels[col] = categoryLabels[categories[col]];
-    }
+    table.rowLabels.push("total");
+    table.colLabels = categories.map(function(cat) {return categoryLabels[cat]}).concat("sum");
 
     // fill in and sum up expenses
     $.each(expenses, function(i, expense) {
         var date = new Date(expense.date * 1000);
         var row = month ? date.getDate() - 1 : date.getMonth();
         var col = $.inArray(expense.category, categories);
-        table.rows[row][col].expenses.push(expense);
-        table.rows[row][col].sum += expense.amount;
-        table.rows[row][col].text = "" + table.rows[row][col].sum;
-        var txt = expense.amount + " " + expense.category + (expense.text ? " (" + expense.text + ")" : "");
-        table.rows[row][col].details.push(txt);
-        table.categorySums[col] += expense.amount;
-    });
-    table.rows.push([{text: "total"}].concat(table.categorySums.map(function(sum) {return {text: sum}})));
+        var cell = table.rows[row][col];
 
-    //TODO: sanity check that nothing got lost
+        cell.expenses.push(expense);
+        cell.sum += expense.amount;
+        cell.text = "" + cell.sum;
+        cell.details.push(expense.amount + " " + expense.category + (expense.text ? " (" + expense.text + ")" : ""));
+
+        table.categorySums[col] += expense.amount;
+        table.rowSums[row] += expense.amount;
+    });
+
+    // compute grand total in three ways and do sanity check
+    var categorySumsSum = table.categorySums.reduce(function(sumSum, sum) {return sumSum + sum;});
+    var rowSumsSum = table.rowSums.reduce(function(sumSum, sum) {return sumSum + sum;});
+    var expensesSum = expenses.reduce(function(sumSum, expense) {return sumSum + expense.amount;}, 0);
+    if (Math.abs(expensesSum - categorySumsSum) > 0.1) {
+        alert("categories sum incorrect? is " + categorySumsSum + " but should be " + expensesSum);
+    }
+    if (Math.abs(expensesSum - rowSumsSum) > 0.1) {
+        alert("rows sum incorrect? is " + rowSumsSum + " but should be " + expensesSum);
+    }
+
+    // add row and col sums
+    $.each(table.rowSums, function(i, sum) {
+        table.rows[i].push({text: "" + sum});
+    });
+    table.rows.push(table.categorySums.map(function(sum) {return {text: "" + sum}}).concat({text: "" + expensesSum}));
 
     $("#status").append(makeTable(table));
 };
