@@ -68,7 +68,11 @@ var handleStatic = function(request, response, resource) {
     console.log("serving " + resource);
     fs.readFile("./static/" + resource, function (err, data) {
         if (!err) {
-            response.writeHead(200, {'Content-Type': mime.lookup(resource)});
+            var contentType = mime.lookup(resource);
+            if (contentType === "text/html") {
+                contentType += ";charset=UTF-8";
+            }
+            response.writeHead(200, {'Content-Type': contentType});
             response.end(data);
         } else {
             response.writeHead(404, {'Content-Type': 'text/plain'});
