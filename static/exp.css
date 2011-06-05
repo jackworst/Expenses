@@ -13,6 +13,10 @@ td {
     padding: 2px 5px;
 }
 
+tr.future td {
+    color: lightgray;
+}
+
 #status > p{
     margin: 0;
     padding: 7px;

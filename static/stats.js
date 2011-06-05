@@ -30,7 +30,7 @@ var makeTable = function(table) {
     tbl.append(headTr);
 
     $.each(table.rows, function(i, row) {
-        var tr = $("<tr/>");
+        var tr = $("<tr/>").addClass(table.rowClasses[i] || "");
         if (typeof table.rowLabels[i] === "string") {
             tr.append($("<td/>").text(table.rowLabels[i]));
         } else {
@@ -85,6 +85,9 @@ var getUrlParams = function() {
 };
 
 var showExpenses = function(expenses, year, month) {
+    var monthView = month !== undefined;
+    var yearView = !monthView;
+    var currentMonth = new Date().getMonth();
     var table = [];
     var rowCount = month ? daysInMonth(month, year) : 12;
     
@@ -102,22 +105,27 @@ var showExpenses = function(expenses, year, month) {
         }
     }
     table.categorySums = categories.map(function(cat) {return 0});
+    if (yearView) {
+        table.pastCategorySums = categories.map(function(cat) {return 0});
+    }
     table.rowSums = table.rows.map(function(cat) {return 0});
 
     // add labels
     table.rowLabels = [];
+    table.rowClasses = [];
     for (var row = 0; row < rowCount; row++) {
         //FIXME: proper date formatting!
-        if (month) {
+        if (monthView) {
             table.rowLabels[row] = (row + 1) + "." + (month + 1) + "." + year;
         } else {
             var url = "/static/stats.html?" + $.param({year: year, month: row});
             table.rowLabels[row] = $('<a/>').attr("href", url).text((row + 1) + "." + year);
+            table.rowClasses[row] = row >= currentMonth ? "future" : "past";
         }
     }
-    table.rowLabels.push("total");
+    table.rowLabels.push(monthView ? "total" : "average");
     table.colLabels = categories.map(function(cat) {return categoryLabels[cat]}).concat("sum");
-    if (month) {
+    if (monthView) {
         var url = "/static/stats.html?" + $.param({year: year});
         table.axis = $('<a/>').attr("href", url).text(year);
     }
@@ -134,12 +142,16 @@ var showExpenses = function(expenses, year, month) {
         cell.text = "" + cell.sum;
         cell.details.push(expense.amount + " " + expense.category + (expense.text ? " (" + expense.text + ")" : ""));
 
-        table.categorySums[col] += expense.amount;
         table.rowSums[row] += expense.amount;
+        table.categorySums[col] += expense.amount;
+        if (yearView && date.getMonth() < currentMonth) {
+            table.pastCategorySums[col] += expense.amount;
+        }
     });
 
     // compute grand total in three ways and do sanity check
     var categorySumsSum = table.categorySums.reduce(function(sumSum, sum) {return sumSum + sum;});
+    var pastCategorySumsSum = yearView ? table.pastCategorySums.reduce(function(sumSum, sum) {return sumSum + sum;}) : 0;
     var rowSumsSum = table.rowSums.reduce(function(sumSum, sum) {return sumSum + sum;});
     var expensesSum = expenses.reduce(function(sumSum, expense) {return sumSum + expense.amount;}, 0);
     if (Math.abs(expensesSum - categorySumsSum) > 0.1) {
@@ -153,7 +165,13 @@ var showExpenses = function(expenses, year, month) {
     $.each(table.rowSums, function(i, sum) {
         table.rows[i].push({text: "" + sum});
     });
-    table.rows.push(table.categorySums.map(function(sum) {return {text: "" + sum}}).concat({text: "" + expensesSum}));
+    if (yearView) {
+        var averagesRow = table.pastCategorySums.map(function(sum) {return {text: "" + (sum / currentMonth)}});
+        averagesRow.push({text: "" + (pastCategorySumsSum / currentMonth)});
+        table.rows.push(averagesRow);
+    } else if (monthView) {
+        table.rows.push(table.categorySums.map(function(sum) {return {text: "" + sum}}).concat({text: "" + expensesSum}));
+    }
 
     $("#status").append(makeTable(table));
 };
@@ -174,7 +192,11 @@ $(document).ready(function() {
         month = new Date().getMonth();
     }
 
-    $.getJSON("/stats/" + encodeURIComponent(year) + (month ? "/" + encodeURIComponent(month) : ""), function(expenses) {
+    var url = "/stats/" + encodeURIComponent(year);
+    if (month !== undefined) {
+        url += "/" + encodeURIComponent(month);
+    }
+    $.getJSON(url, function(expenses) {
         showExpenses(expenses, year, month);
     });
 });

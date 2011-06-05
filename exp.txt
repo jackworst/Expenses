@@ -22,8 +22,6 @@ Technology:
 scratch area:
 
 to think about next time:
-- yearly stats (month per row)
-- how to track time? android app?
 
 phase 1 notes:
 - mobile stats would be nice (at least "online")
