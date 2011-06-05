@@ -1,10 +1,29 @@
 /* stats.js */
 
+var categories = ["food", "household", "party", "leisure", "health", "rent", "clothes", "transport", "misc"];
+var categoryLabels = {
+    food: "Food",
+    household: "Household",
+    party: "Party",
+    leisure: "Free Time",
+    health: "Health",
+    rent: "Rent",
+    clothes: "Clothes",
+    transport: "Transportation",
+    misc: "Miscellaneous"
+};
+
 var makeTable = function(table) {
     var tbl = $("<table/>");
 
     var headTr = $("<tr/>");
-    headTr.append("<td/>");
+    if (typeof table.axis === "string") {
+        headTr.append($("<td/>").text(table.axis));
+    } else if (table.axis) {
+        headTr.append($("<td/>").append(table.axis));
+    } else {
+        headTr.append("<td/>");
+    }
     $.each(table.colLabels, function(j, label) {
         headTr.append($("<td/>").text(label));
     });
@@ -12,10 +31,13 @@ var makeTable = function(table) {
 
     $.each(table.rows, function(i, row) {
         var tr = $("<tr/>");
-        tr.append($("<td/>").text(table.rowLabels[i]));
+        if (typeof table.rowLabels[i] === "string") {
+            tr.append($("<td/>").text(table.rowLabels[i]));
+        } else {
+            tr.append($("<td/>").append(table.rowLabels[i]));
+        }
         $.each(row, function(j, col) {
-            var td = $("<td/>");
-            td.text(col.text);
+            var td = $("<td/>").text(col.text);
             if (col.details && col.details.length > 0) {
                 td.mouseover(function() {
                     showTooltip($(this), col.details);
@@ -49,19 +71,6 @@ var hideTooltip = function(el, content) {
 
 var daysInMonth = function(month, year) {
     return 32 - new Date(year, month, 32).getDate();
-};
-
-var categories = ["food", "household", "party", "leisure", "health", "rent", "clothes", "transport", "misc"];
-var categoryLabels = {
-    food: "Food",
-    household: "Household",
-    party: "Party",
-    leisure: "Free Time",
-    health: "Health",
-    rent: "Rent",
-    clothes: "Clothes",
-    transport: "Transportation",
-    misc: "Miscellaneous"
 };
 
 var getUrlParams = function() {
@@ -102,11 +111,16 @@ var showExpenses = function(expenses, year, month) {
         if (month) {
             table.rowLabels[row] = (row + 1) + "." + (month + 1) + "." + year;
         } else {
-            table.rowLabels[row] = (row + 1) + "." + year;
+            var url = "/static/stats.html?" + $.param({year: year, month: row});
+            table.rowLabels[row] = $('<a/>').attr("href", url).text((row + 1) + "." + year);
         }
     }
     table.rowLabels.push("total");
     table.colLabels = categories.map(function(cat) {return categoryLabels[cat]}).concat("sum");
+    if (month) {
+        var url = "/static/stats.html?" + $.param({year: year});
+        table.axis = $('<a/>').attr("href", url).text(year);
+    }
 
     // fill in and sum up expenses
     $.each(expenses, function(i, expense) {
