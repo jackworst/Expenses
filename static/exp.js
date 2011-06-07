@@ -45,7 +45,7 @@ var listExpenses = function(target) {
     $.each(expenses, function(i, expense) {
         var tr = $('<tr/>');
         tr.append($('<td/>').text(new Date(expense.date * 1000).toString()));
-        tr.append($('<td/>').text(expense.amount));
+        tr.append($('<td/>').text(expense.amount / 100));
         tr.append($('<td/>').text(expense.category));
         tr.append($('<td/>').text(expense.text));
         var delLink = $('<a href="#">Delete</a>').click(function() {
