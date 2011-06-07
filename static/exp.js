@@ -67,7 +67,7 @@ $(document).ready(function() {
         addExpense({
             eid: "" + new Date().getTime() + "_" + Math.random(), 
             date: Date.parse($("#when").val()) / 1000,
-            amount: $("#howMuch").val(),
+            amount: $("#howMuch").val() * 100,
             category: $("#category").val(),
             text: $("#what").val(),
         });
