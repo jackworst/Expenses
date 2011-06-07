@@ -1,8 +1,16 @@
 /* exp.js */
 
 var resetFields = function() {
-    $("#howMuch, #what").val(""),
-    $("#when").val(new Date());
+    $("#howMuch, #what").val("");
+    $("#when").val(iso8601date(new Date()));
+};
+
+var iso8601date = function(date) {
+    return pad2(date.getFullYear()) + "-" + pad2(date.getMonth()) + "-" + pad2(date.getDate());
+};
+
+var pad2 = function(number) {
+    return (number < 10 ? "0" : "") + number;
 };
 
 var addExpense = function(expense) {
