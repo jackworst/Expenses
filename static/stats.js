@@ -84,6 +84,10 @@ var getUrlParams = function() {
     return params;
 };
 
+var formatMoney = function(amount) {
+    return "" + (amount / 100);
+};
+
 var showExpenses = function(expenses, year, month) {
     var monthView = month !== undefined;
     var yearView = !monthView;
@@ -139,8 +143,8 @@ var showExpenses = function(expenses, year, month) {
 
         cell.expenses.push(expense);
         cell.sum += expense.amount;
-        cell.text = "" + cell.sum;
-        cell.details.push(expense.amount + " " + expense.category + (expense.text ? " (" + expense.text + ")" : ""));
+        cell.text = formatMoney(cell.sum);
+        cell.details.push(formatMoney(expense.amount) + " " + expense.category + (expense.text ? " (" + expense.text + ")" : ""));
 
         table.rowSums[row] += expense.amount;
         table.categorySums[col] += expense.amount;
@@ -163,14 +167,14 @@ var showExpenses = function(expenses, year, month) {
 
     // add row and col sums
     $.each(table.rowSums, function(i, sum) {
-        table.rows[i].push({text: "" + sum});
+        table.rows[i].push({text: formatMoney(sum)});
     });
     if (yearView) {
-        var averagesRow = table.pastCategorySums.map(function(sum) {return {text: "" + (sum / currentMonth)}});
-        averagesRow.push({text: "" + (pastCategorySumsSum / currentMonth)});
+        var averagesRow = table.pastCategorySums.map(function(sum) {return {text: formatMoney(sum / currentMonth)}});
+        averagesRow.push({text: formatMoney(pastCategorySumsSum / currentMonth)});
         table.rows.push(averagesRow);
     } else if (monthView) {
-        table.rows.push(table.categorySums.map(function(sum) {return {text: "" + sum}}).concat({text: "" + expensesSum}));
+        table.rows.push(table.categorySums.map(function(sum) {return {text: formatMoney(sum)}}).concat({text: formatMoney(expensesSum)}));
     }
 
     $("#status").append(makeTable(table));
