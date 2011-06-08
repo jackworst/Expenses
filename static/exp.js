@@ -6,7 +6,7 @@ var resetFields = function() {
 };
 
 var iso8601date = function(date) {
-    return pad2(date.getFullYear()) + "-" + pad2(date.getMonth()) + "-" + pad2(date.getDate());
+    return pad2(date.getFullYear()) + "-" + pad2(date.getMonth() + 1) + "-" + pad2(date.getDate());
 };
 
 var pad2 = function(number) {
