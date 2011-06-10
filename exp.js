@@ -7,14 +7,17 @@ var statsRe = /^\/stats\/(\d+)(\/(\d+))?$/;
 
 var db = new mongo.Db('test', new mongo.Server("127.0.0.1", 27017, {}));
 
+var dbClient;
+db.open(function(err, client) {
+    dbClient = client;
+});
+
 var withExpenses = function(cb) {
-    db.open(function(err, p_client) {
-        db.collection('exp', function(err, expenses) {
-            if (err) {
-                throw err;
-            }
-            cb(expenses);
-        });
+    dbClient.collection('exp', function(err, expenses) {
+        if (err) {
+            throw err;
+        }
+        cb(expenses);
     });
 };
 
@@ -37,8 +40,12 @@ var handleSync = function(request, response) {
         withExpenses(function(expenses) {
             expenses.find({eid:expense.eid}).toArray(function(e, existing) {
                 if (existing.length === 0) {
-                    expenses.insert(expense, function(err, docs) {
-                        sendResponse(response, {ok: true, eid: expense.eid});
+                    expenses.insert(expense, {safe: true}, function(err, docs) {
+                        if (!err) {
+                            sendResponse(response, {ok: true, eid: expense.eid});
+                        } else {
+                            sendResponse(response, {ok: false, error: err});
+                        }
                     });
                 } else {
                     sendResponse(response, {ok: false, error: "duplicates: " + JSON.stringify(existing)});
