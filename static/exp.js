@@ -60,7 +60,14 @@ var listExpenses = function(target) {
             clearExpense(expense.eid);
             listExpenses($("#list"));
         });
-        tr.append($('<td/>').append(delLink));
+        var copyLink = $('<a href="#">Copy</a>').click(function() {
+            //clearExpense(expense.eid);
+            $("#howMuch").val(expense.amount / 100);
+            $("#category").val(expense.category);
+            $("#what").val(expense.text);
+            $("#when").val(iso8601date(new Date(expense.date * 1000)));
+        });
+        tr.append($('<td/>').append(delLink).append('<span> </span>').append(copyLink));
         table.append(tr);
     });
     target.empty().append(table);
