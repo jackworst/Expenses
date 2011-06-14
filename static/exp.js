@@ -52,7 +52,7 @@ var listExpenses = function(target) {
     var table = $('<table/>');
     $.each(expenses, function(i, expense) {
         var tr = $('<tr/>');
-        tr.append($('<td/>').text(new Date(expense.date * 1000).toString()));
+        tr.append($('<td/>').text(iso8601date(new Date(expense.date * 1000))));
         tr.append($('<td/>').text(expense.amount / 100));
         tr.append($('<td/>').text(expense.category));
         tr.append($('<td/>').text(expense.text));
