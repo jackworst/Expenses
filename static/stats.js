@@ -180,6 +180,12 @@ var showExpenses = function(expenses, year, month) {
     $("#status").append(makeTable(table));
 };
 
+var handleAuthError = function(jqXHR) {
+    if (jqXHR.status === 403) {
+        window.location = "/static/token.html";
+    }
+};
+
 $(document).ready(function() {
     var params = getUrlParams();
     var year, month;
@@ -200,7 +206,7 @@ $(document).ready(function() {
     if (month !== undefined) {
         url += "/" + encodeURIComponent(month);
     }
-    $.getJSON(url, function(expenses) {
+    $.getJSON(url, {token: localStorage.token}, function(expenses) {
         showExpenses(expenses, year, month);
-    });
+    }).error(handleAuthError);
 });

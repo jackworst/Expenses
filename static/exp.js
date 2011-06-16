@@ -13,6 +13,12 @@ var pad2 = function(number) {
     return (number < 10 ? "0" : "") + number;
 };
 
+var handleAuthError = function(jqXHR) {
+    if (jqXHR.status === 403) {
+        window.location = "/static/token.html";
+    }
+};
+
 var addExpense = function(expense) {
     var expenses = JSON.parse(localStorage.expenses || "[]");
     expenses.push(expense);
@@ -31,7 +37,8 @@ var syncExpenses = function(cb) {
     var expenses = JSON.parse(localStorage.expenses || "[]");
     var todo = expenses.length;
     $.each(expenses, function(i, expense) {
-        $.post("/sync", expense, function(response) {
+        var data = $.extend({token: localStorage.token}, expense);
+        $.post("/sync", data, function(response) {
             if (response.ok) {
                 clearExpense(response.eid);
                 statusMessage("success", "OK: " + expense.eid);
@@ -43,7 +50,7 @@ var syncExpenses = function(cb) {
             if (todo == 0) {
                 cb();
             }
-        });
+        }).error(handleAuthError);
     });
 };
 

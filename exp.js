@@ -1,6 +1,7 @@
 var http = require("http"), url = require("url"), form = require("./lib/cb-forms"), mime = require("mime");
 var mongo = require('./lib/mongo-driver/node-mongodb-native/lib/mongodb');
 var fs = require("fs");
+var config = require("./config").config;
 
 var staticRe = /^\/static\/([\w\.]+)$/;
 var statsRe = /^\/stats\/(\d+)(\/(\d+))?$/;
@@ -26,48 +27,68 @@ var sendResponse = function(response, data) {
     response.end(JSON.stringify(data) + "\n", "UTF-8");
 };
 
+var sendError = function(response, code, msg) {
+    response.writeHead(code || 500, {'Content-Type': 'text/plain'});
+    response.end(msg || "ERROR", "UTF-8");
+};
+
+var checkAuthToken = function(token) {
+    return token === config.token;
+};
+
 var handleSync = function(request, response) {
     form.onData(request, function(data) {
         console.log("POST data: " + JSON.stringify(data));
 
-        var expense = {};
-        expense.eid = data.eid
-        expense.date = parseInt(data.date, 10);
-        expense.amount = parseInt(data.amount, 10);
-        expense.category = data.category || "none";
-        expense.text = data.text || "";
+        if (checkAuthToken(data.token)) {
+            var expense = {};
+            expense.eid = data.eid
+            expense.date = parseInt(data.date, 10);
+            expense.amount = parseInt(data.amount, 10);
+            expense.category = data.category || "none";
+            expense.text = data.text || "";
 
-        withExpenses(function(expenses) {
-            expenses.find({eid:expense.eid}).toArray(function(e, existing) {
-                if (existing.length === 0) {
-                    expenses.insert(expense, {safe: true}, function(err, docs) {
-                        if (!err) {
-                            sendResponse(response, {ok: true, eid: expense.eid});
-                        } else {
-                            sendResponse(response, {ok: false, error: err});
-                        }
-                    });
-                } else {
-                    sendResponse(response, {ok: false, error: "duplicates: " + JSON.stringify(existing)});
-                }
+            withExpenses(function(expenses) {
+                expenses.find({eid:expense.eid}).toArray(function(e, existing) {
+                    if (existing.length === 0) {
+                        expenses.insert(expense, {safe: true}, function(err, docs) {
+                            if (!err) {
+                                sendResponse(response, {ok: true, eid: expense.eid});
+                            } else {
+                                sendResponse(response, {ok: false, error: err});
+                            }
+                        });
+                    } else {
+                        sendResponse(response, {ok: false, error: "duplicates: " + JSON.stringify(existing)});
+                    }
+                });
             });
-        });
+        } else {
+            sendError(response, 403, "ACCESS DENIED");
+        }
     });
 };
 
-var handleStats = function(request, response, year, month) {
+var handleStats = function(request, response) {
     withExpenses(function(expenses) {
-        var start, end;
-        if (year && month) {
-            start = new Date(year, month, 1).getTime() / 1000;
-            end = new Date(year, month + 1, 1).getTime() / 1000;
+        var reqUrl = url.parse(request.url, true);
+        if (checkAuthToken(reqUrl.query.token)) {
+            var match = statsRe.exec(reqUrl.pathname);
+            var year = match[1], month = match[3]
+            var start, end;
+            if (year && month) {
+                start = new Date(year, month, 1).getTime() / 1000;
+                end = new Date(year, month + 1, 1).getTime() / 1000;
+            } else {
+                start = new Date(year, 0, 1).getTime() / 1000;
+                end = new Date(year + 1, 0, 1).getTime() / 1000;            
+            }
+            expenses.find({date:{$gte: start, $lte: end}}).toArray(function(e, expenses) {
+                sendResponse(response, expenses);
+            });
         } else {
-            start = new Date(year, 0, 1).getTime() / 1000;
-            end = new Date(year + 1, 0, 1).getTime() / 1000;            
+            sendError(response, 403, "ACCESS DENIED");
         }
-        expenses.find({date:{$gte: start, $lte: end}}).toArray(function(e, expenses) {
-            sendResponse(response, expenses);
-        });
     });
 };
 
@@ -82,8 +103,7 @@ var handleStatic = function(request, response, resource) {
             response.writeHead(200, {'Content-Type': contentType});
             response.end(data);
         } else {
-            response.writeHead(404, {'Content-Type': 'text/plain'});
-            response.end("ERROR", "UTF-8");
+            sendError(response, 404, "NOT FOUND");
         }
     });
 };
@@ -95,13 +115,11 @@ http.createServer(function (request, response) {
     if (reqUrl.pathname === "/sync") {
         handleSync(request, response);
     } else if (statsRe.test(reqUrl.pathname)) {
-        var match = statsRe.exec(reqUrl.pathname);
-        handleStats(request, response, match[1], match[3]);
+        handleStats(request, response);
     } else if (staticRe.test(reqUrl.pathname)) {
         handleStatic(request, response, staticRe.exec(reqUrl.pathname)[1]);
     } else {
         console.log("ignoring");
-        response.writeHead(404, {'Content-Type': 'text/plain'});
-        response.end();
+        sendError(response, 404, "NOT FOUND");
     }
 }).listen(13373);
