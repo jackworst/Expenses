@@ -83,7 +83,7 @@ var handleStats = function(request, response) {
                 start = new Date(year, 0, 1).getTime() / 1000;
                 end = new Date(year + 1, 0, 1).getTime() / 1000;
             }
-            expenses.find({date:{$gte: start, $lte: end}}).toArray(function(e, expenses) {
+            expenses.find({date:{$gte: start, $lt: end}}).toArray(function(e, expenses) {
                 sendResponse(response, expenses);
             });
         } else {
