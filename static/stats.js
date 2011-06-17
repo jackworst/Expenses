@@ -85,7 +85,7 @@ var getUrlParams = function() {
 };
 
 var formatMoney = function(amount) {
-    return "" + (amount / 100);
+    return (amount / 100).toFixed(2);
 };
 
 var showExpenses = function(expenses, year, month) {
