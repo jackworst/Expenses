@@ -24,12 +24,12 @@ var withExpenses = function(cb) {
 
 var sendResponse = function(response, data) {
     response.writeHead(200, {'Content-Type': 'application/json'});
-    response.end(JSON.stringify(data) + "\n", "UTF-8");
+    response.end(JSON.stringify(data) + "\n", "utf8");
 };
 
 var sendError = function(response, code, msg) {
     response.writeHead(code || 500, {'Content-Type': 'text/plain'});
-    response.end(msg || "ERROR", "UTF-8");
+    response.end(msg || "ERROR", "utf8");
 };
 
 var checkAuthToken = function(token) {
@@ -74,9 +74,9 @@ var handleStats = function(request, response) {
         var reqUrl = url.parse(request.url, true);
         if (checkAuthToken(reqUrl.query.token)) {
             var match = statsRe.exec(reqUrl.pathname);
-            var year = match[1], month = match[3]
+            var year = parseInt(match[1], 10), month = match[3] ? parseInt(match[3], 10) : undefined;
             var start, end;
-            if (year && month) {
+            if (year !== undefined && month !== undefined) {
                 start = new Date(year, month, 1).getTime() / 1000;
                 end = new Date(year, month + 1, 1).getTime() / 1000;
             } else {
