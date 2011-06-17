@@ -97,7 +97,7 @@ var addExpensesFromCsv = function(text) {
                 addExpense({
                     eid: "" + new Date().getTime() + "_" + Math.random(), 
                     date: date.getTime() / 1000,
-                    amount: parseFloat(fields[i]) * 100,
+                    amount: Math.round(parseFloat(fields[i]) * 100),
                     category: categories[i - 2],
                     text: (i >= 5 && i != 9) ? (fields[11] || "") : "",
                 });
