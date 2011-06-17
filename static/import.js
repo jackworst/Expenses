@@ -99,7 +99,7 @@ var addExpensesFromCsv = function(text) {
                     date: date.getTime() / 1000,
                     amount: parseFloat(fields[i]) * 100,
                     category: categories[i - 2],
-                    text: i >= 5 ? (fields[11] || "") : "",
+                    text: (i >= 5 && i != 9) ? (fields[11] || "") : "",
                 });
                 rowSum += parseFloat(fields[i]);
             }
