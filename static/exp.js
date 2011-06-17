@@ -46,6 +46,7 @@ var syncExpenses = function(cb) {
                 alert("failed: " + expense.eid + "\n" + response.error);
                 statusMessage("failure", "ERR: " + expense.eid);
             }
+            console.log(todo);
             todo -= 1;
             if (todo == 0) {
                 cb();
@@ -68,7 +69,7 @@ var listExpenses = function(target) {
             listExpenses($("#list"));
         });
         var copyLink = $('<a href="#">Copy</a>').click(function() {
-            //clearExpense(expense.eid);
+            clearExpense(expense.eid);
             $("#howMuch").val(expense.amount / 100);
             $("#category").val(expense.category);
             $("#what").val(expense.text);
