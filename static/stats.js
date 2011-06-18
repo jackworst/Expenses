@@ -14,21 +14,21 @@ var categoryLabels = {
 };
 
 var makeTable = function(table) {
-    var tbl = $("<table/>");
-
+    var thead = $("<thead/>");
     var headTr = $("<tr/>");
     if (typeof table.axis === "string") {
-        headTr.append($("<td/>").text(table.axis));
+        headTr.append($("<th/>").text(table.axis));
     } else if (table.axis) {
-        headTr.append($("<td/>").append(table.axis));
+        headTr.append($("<th/>").append(table.axis));
     } else {
-        headTr.append("<td/>");
+        headTr.append("<th/>");
     }
     $.each(table.colLabels, function(j, label) {
-        headTr.append($("<td/>").text(label));
+        headTr.append($("<th/>").text(label));
     });
-    tbl.append(headTr);
+    thead.append(headTr);
 
+    var tbody = $("<tbody/>");
     $.each(table.rows, function(i, row) {
         var tr = $("<tr/>").addClass(table.rowClasses[i] || "");
         if (typeof table.rowLabels[i] === "string") {
@@ -45,10 +45,10 @@ var makeTable = function(table) {
             }
             tr.append(td);
         });
-        tbl.append(tr);
+        tbody.append(tr);
     });
 
-    return tbl;
+    return $("<table/>").append(thead).append(tbody);
 };
 
 var showTooltip = function(el, details) {
@@ -177,7 +177,7 @@ var showExpenses = function(expenses, year, month) {
         table.rows.push(table.categorySums.map(function(sum) {return {text: formatMoney(sum)}}).concat({text: formatMoney(expensesSum)}));
     }
 
-    $("#status").append(makeTable(table));
+    $("#status").append(makeTable(table).addClass("stats"));
 };
 
 var handleAuthError = function(jqXHR) {

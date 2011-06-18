@@ -8,12 +8,21 @@ table {
     border-collapse: collapse;
 }
 
-td {
+td, th {
     border: 1px solid grey;
     padding: 2px 5px;
 }
 
-tr.future td {
+.stats td {
+    padding-left: 15px;
+    text-align: right;
+}
+
+.stats th {
+    font-weight: normal;
+}
+
+.stats tr.future td {
     color: lightgray;
 }
 
