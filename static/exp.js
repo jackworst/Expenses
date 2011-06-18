@@ -13,6 +13,10 @@ var pad2 = function(number) {
     return (number < 10 ? "0" : "") + number;
 };
 
+var parseMoney = function(txt) {
+    return Math.round(parseFloat(txt) * 100);
+};
+
 var handleAuthError = function(jqXHR) {
     if (jqXHR.status === 403) {
         window.location = "/static/token.html";
@@ -90,7 +94,7 @@ $(document).ready(function() {
         addExpense({
             eid: "" + new Date().getTime() + "_" + Math.random(), 
             date: Date.parse($("#when").val()) / 1000,
-            amount: $("#howMuch").val() * 100,
+            amount: parseMoney($("#howMuch").val()),
             category: $("#category").val(),
             text: $("#what").val(),
         });
