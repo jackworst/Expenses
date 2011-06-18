@@ -93,7 +93,7 @@ var showExpenses = function(expenses, year, month) {
     var yearView = !monthView;
     var currentMonth = new Date().getMonth();
     var table = [];
-    var rowCount = month ? daysInMonth(month, year) : 12;
+    var rowCount = monthView ? daysInMonth(month, year) : 12;
     
     // init empty table
     table.rows = [];
@@ -137,7 +137,7 @@ var showExpenses = function(expenses, year, month) {
     // fill in and sum up expenses
     $.each(expenses, function(i, expense) {
         var date = new Date(expense.date * 1000);
-        var row = month ? date.getDate() - 1 : date.getMonth();
+        var row = monthView ? date.getDate() - 1 : date.getMonth();
         var col = $.inArray(expense.category, categories);
         var cell = table.rows[row][col];
 
