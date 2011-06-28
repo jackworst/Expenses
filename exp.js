@@ -6,7 +6,7 @@ var config = require("./config").config;
 var staticRe = /^\/static\/([\w\.]+)$/;
 var statsRe = /^\/stats\/(\d+)(\/(\d+))?$/;
 
-var db = new mongo.Db('test', new mongo.Server("127.0.0.1", 27017, {}));
+var db = new mongo.Db('local', new mongo.Server("127.0.0.1", 27017, {}));
 
 var dbClient;
 db.open(function(err, client) {
