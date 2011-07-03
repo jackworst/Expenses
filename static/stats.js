@@ -88,7 +88,7 @@ var formatMoney = function(amount) {
     return (amount / 100).toFixed(2);
 };
 
-var showExpenses = function(expenses, year, month) {
+var computeExpensesTable = function(expenses, year, month) {
     var monthView = month !== undefined;
     var yearView = !monthView;
     var currentMonth = new Date().getMonth();
@@ -177,7 +177,11 @@ var showExpenses = function(expenses, year, month) {
         table.rows.push(table.categorySums.map(function(sum) {return {text: formatMoney(sum)}}).concat({text: formatMoney(expensesSum)}));
     }
 
-    $("#status").append(makeTable(table).addClass("stats"));
+    return table;
+};
+
+var showExpenses = function(expenses, year, month) {
+    $("#status").append(makeTable(computeExpensesTable(expenses, year, month)).addClass("stats"));
 };
 
 var handleAuthError = function(jqXHR) {
