@@ -68,16 +68,17 @@ var listExpenses = function(target) {
         tr.append($('<td/>').text(expense.amount / 100));
         tr.append($('<td/>').text(expense.category));
         tr.append($('<td/>').text(expense.text));
-        var delLink = $('<a href="#">Delete</a>').click(function() {
+        var delLink = $('<a href="#">Del</a>').click(function() {
             clearExpense(expense.eid);
             listExpenses($("#list"));
         });
-        var copyLink = $('<a href="#">Copy</a>').click(function() {
+        var copyLink = $('<a href="#">Edit</a>').click(function() {
             clearExpense(expense.eid);
             $("#howMuch").val(expense.amount / 100);
             $("#category").val(expense.category);
             $("#what").val(expense.text);
             $("#when").val(iso8601date(new Date(expense.date * 1000)));
+            listExpenses($("#list"));
         });
         tr.append($('<td/>').append(delLink).append('<span> </span>').append(copyLink));
         table.append(tr);
