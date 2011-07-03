@@ -90,6 +90,11 @@ var statusMessage = function(kind, text) {
     $("#status").append($('<p/>').addClass(kind).text(text));
 };
 
+$(window).load(function(){
+    window.scrollTo(0,1);
+    $("#howMuch").focus();
+});
+
 $(document).ready(function() {
     $("#add").click(function() {
         addExpense({

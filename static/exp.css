@@ -4,6 +4,21 @@ body {
     font-family: sans-serif;
 }
 
+h2.topright {
+    position: absolute;
+    top: -30px;
+    right: 0;
+    height: 30px;
+    margin: 0;
+    padding: 0 6px;
+    background-color: #359AFF;
+    color: #fff;
+    border-top-left-radius: 10px;
+    font-size: 24px;
+    -webkit-transform: rotate(-90deg);
+    -webkit-transform-origin: right bottom;
+}
+
 table {
     border-collapse: collapse;
 }

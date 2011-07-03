@@ -11,12 +11,8 @@
         <link rel="stylesheet" href="exp.css">
     </head>
     <body>
-        <h2>Add Expense:</h2>
+        <h2 class="topright">Add Expense</h2>
         <form>
-            <p>
-                <label for="when">Date: </label>
-                <input type="text" id="when"/>
-            </p>
             <p>
                 <label for="howMuch">Amount: </label>
                 <input type="number" id="howMuch"/>
@@ -40,10 +36,15 @@
                 <input type="text" id="what"/>
             </p>
             <p>
+                <label for="when">Date: </label>
+                <input type="text" id="when"/>
+            </p>
+            <p>
                 <input type="submit" id="add" value="Add"/>
             </p>
         </form>
-        <h2>Expenses:</h2>
+        <hr/>
+        <h2>Pending Sync:</h2>
         <div id="list"></div>
         <form>
             <p>
