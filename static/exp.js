@@ -97,6 +97,7 @@ $(document).ready(function() {
             amount: parseMoney($("#howMuch").val()),
             category: $("#category").val(),
             text: $("#what").val(),
+            creationTs: Math.floor(new Date().getTime() / 1000)
         });
         resetFields();
         listExpenses($("#list"));

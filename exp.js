@@ -47,6 +47,10 @@ var handleSync = function(request, response) {
             expense.amount = parseInt(data.amount, 10);
             expense.category = data.category || "none";
             expense.text = data.text || "";
+            if (data.creationTs) {
+                expense.creationTs = parseInt(data.creationTs, 10);
+            }
+            expense.syncTs = Math.floor(new Date().getTime() / 1000);
 
             withExpenses(function(expenses) {
                 expenses.find({eid:expense.eid}).toArray(function(e, existing) {
