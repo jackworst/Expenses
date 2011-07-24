@@ -118,16 +118,18 @@ var computeExpensesTable = function(expenses, year, month) {
     table.rowLabels = [];
     table.rowClasses = [];
     for (var row = 0; row < rowCount; row++) {
+        table.rowClasses[row] = "";
         //FIXME: proper date formatting!
         if (monthView) {
             table.rowLabels[row] = (row + 1) + "." + (month + 1) + "." + year;
         } else {
             var url = "/static/stats.html?" + $.param({year: year, month: row});
             table.rowLabels[row] = $('<a/>').attr("href", url).text((row + 1) + "." + year);
-            table.rowClasses[row] = row >= currentMonth ? "future" : "past";
+            table.rowClasses[row] += " " + (row >= currentMonth ? "future" : "past");
         }
     }
     table.rowLabels.push(monthView ? "total" : "average");
+    table.rowClasses.push("results");
     table.colLabels = categories.map(function(cat) {return categoryLabels[cat]}).concat("sum");
     if (monthView) {
         var url = "/static/stats.html?" + $.param({year: year});

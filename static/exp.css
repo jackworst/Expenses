@@ -1,8 +1,69 @@
 /* exp.css */
 
+/* general */
+
 body {
     font-family: sans-serif;
 }
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid grey;
+    padding: 2px 5px;
+}
+
+/* expenses statistics */
+
+.stats td {
+    padding-left: 15px;
+    text-align: right;
+}
+
+.stats th {
+    font-weight: normal;
+    border-bottom: 2px solid black;
+}
+
+.stats tr.results td {
+    font-weight: bold;
+    border-top: 2px solid black;
+}
+
+.stats tr.results td:first-child {
+    font-weight: normal;
+}
+
+.stats td:first-child, .stats th:first-child {
+    border-right: 2px solid black;
+}
+
+.stats td:last-child, .stats th:last-child {
+    border-left: 2px solid black;
+}
+
+.stats td:last-child {
+    font-weight: bold;
+}
+
+.stats tr.future td {
+    color: lightgray;
+}
+
+#tooltip {
+    position: absolute;
+    background: #eee;
+    padding: 8px;
+    border: 1px solid grey;
+}
+
+#tooltip p {
+    margin: 0;
+}
+
+/* add expense */
 
 h2.topright {
     position: absolute;
@@ -19,28 +80,6 @@ h2.topright {
     -webkit-transform-origin: right bottom;
 }
 
-table {
-    border-collapse: collapse;
-}
-
-td, th {
-    border: 1px solid grey;
-    padding: 2px 5px;
-}
-
-.stats td {
-    padding-left: 15px;
-    text-align: right;
-}
-
-.stats th {
-    font-weight: normal;
-}
-
-.stats tr.future td {
-    color: lightgray;
-}
-
 #status > p{
     margin: 0;
     padding: 7px;
@@ -54,15 +93,4 @@ td, th {
 #status .failure {
     color: #CF6661;
     background: #FFDDDB;
-}
-
-#tooltip {
-    position: absolute;
-    background: #eee;
-    padding: 8px;
-    border: 1px solid grey;
-}
-
-#tooltip p {
-    margin: 0;
 }
