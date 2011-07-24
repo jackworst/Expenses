@@ -212,7 +212,13 @@ $(document).ready(function() {
     if (month !== undefined) {
         url += "/" + encodeURIComponent(month);
     }
-    $.getJSON(url, {token: localStorage.token}, function(expenses) {
-        showExpenses(expenses, year, month);
+    $.ajax({
+        url: url,
+        dataType: 'json',
+        cache: false,
+        data: {token: localStorage.token},
+        success: function(expenses) {
+            showExpenses(expenses, year, month);
+        }
     }).error(handleAuthError);
 });
