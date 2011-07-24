@@ -40,6 +40,9 @@ var clearExpense = function(eid) {
 var syncExpenses = function(cb) {
     var expenses = JSON.parse(localStorage.expenses || "[]");
     var todo = expenses.length;
+    if (todo === 0) {
+        alert("nothing to sync");
+    }
     $.each(expenses, function(i, expense) {
         var data = $.extend({token: localStorage.token}, expense);
         $.post("/sync", data, function(response) {
