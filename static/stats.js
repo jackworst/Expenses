@@ -13,7 +13,7 @@ var categoryLabels = {
     misc: "Miscellaneous"
 };
 
-var makeTable = function(table) {
+var makeTable = function(table, subTableCb) {
     var thead = $("<thead/>");
     var headTr = $("<tr/>");
     if (typeof table.axis === "string") {
@@ -28,6 +28,12 @@ var makeTable = function(table) {
     });
     thead.append(headTr);
 
+    var details = [];
+    var mouseOver = function(event) {
+        showTooltip($(this), subTableCb(details[$(this).data("detail")]));
+    };
+    var mouseOut = hideTooltip;
+
     var tbody = $("<tbody/>");
     $.each(table.rows, function(i, row) {
         var tr = $("<tr/>").addClass(table.rowClasses[i] || "");
@@ -39,9 +45,9 @@ var makeTable = function(table) {
         $.each(row, function(j, col) {
             var td = $("<td/>").text(col.text);
             if (col.details && col.details.length > 0) {
-                td.mouseover(function() {
-                    showTooltip($(this), col.details);
-                }).mouseout(hideTooltip);
+                var detailId = details.length;
+                details.push(col.details);
+                td.data("detail", detailId).mouseover(mouseOver).mouseout(mouseOut);
             }
             tr.append(td);
         });
@@ -51,12 +57,7 @@ var makeTable = function(table) {
     return $("<table/>").append(thead).append(tbody);
 };
 
-var showTooltip = function(el, details) {
-    var content = $('<div/>');
-    $.each(details, function(t, line) {
-        content.append($('<p/>').text(line));
-    });
-
+var showTooltip = function(el, content) {
     hideTooltip();
     var tip = $('<div id="tooltip"/>').append(content).css({
         left: el.position().left,
@@ -146,7 +147,7 @@ var computeExpensesTable = function(expenses, year, month) {
         cell.expenses.push(expense);
         cell.sum += expense.amount;
         cell.text = formatMoney(cell.sum);
-        cell.details.push(formatMoney(expense.amount) + " " + expense.category + (expense.text ? " (" + expense.text + ")" : ""));
+        cell.details.push(expense);
 
         table.rowSums[row] += expense.amount;
         table.categorySums[col] += expense.amount;
@@ -182,8 +183,21 @@ var computeExpensesTable = function(expenses, year, month) {
     return table;
 };
 
+var makeExpSubTable = function(details) {
+    var table = $('<table/>');
+    $.each(details, function(i, expense) {
+        var tr = $('<tr/>');
+        tr.append($('<td/>').text(formatMoney(expense.amount)));
+        tr.append($('<td/>').text(expense.category));
+        tr.append($('<td/>').text(expense.text));
+        table.append(tr);
+    });
+
+    return table;
+};
+
 var showExpenses = function(expenses, year, month) {
-    $("#status").append(makeTable(computeExpensesTable(expenses, year, month)).addClass("stats"));
+    $("#status").append(makeTable(computeExpensesTable(expenses, year, month), makeExpSubTable).addClass("stats"));
 };
 
 var handleAuthError = function(jqXHR) {

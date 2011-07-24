@@ -55,12 +55,19 @@ td, th {
 #tooltip {
     position: absolute;
     background: #eee;
-    padding: 8px;
+    padding: 6px;
     border: 1px solid grey;
 }
 
-#tooltip p {
-    margin: 0;
+#tooltip table td {
+    border: 0 none;
+    padding: 1px 3px;
+    text-align: left;
+}
+
+#tooltip table td:first-child {
+    text-align: right;
+    font-weight: bold;
 }
 
 /* add expense */
@@ -80,7 +87,7 @@ h2.topright {
     -webkit-transform-origin: right bottom;
 }
 
-#status > p{
+#status > p {
     margin: 0;
     padding: 7px;
 }
