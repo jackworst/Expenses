@@ -17,9 +17,11 @@ var parseMoney = function(txt) {
     return Math.round(parseFloat(txt) * 100);
 };
 
-var handleAuthError = function(jqXHR) {
+var handleAuthError = function(jqXHR, textStatus) {
     if (jqXHR.status === 403) {
         window.location = "/static/token.html";
+    } else {
+        alert(textStatus);
     }
 };
 
