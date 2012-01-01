@@ -92,7 +92,7 @@ var formatMoney = function(amount) {
 var computeExpensesTable = function(expenses, year, month) {
     var monthView = month !== undefined;
     var yearView = !monthView;
-    var currentMonth = new Date().getMonth();
+    var currentMonth = (year === new Date().getFullYear()) ? new Date().getMonth() : 12;
     var table = [];
     var rowCount = monthView ? daysInMonth(month, year) : 12;
     
