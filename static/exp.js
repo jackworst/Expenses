@@ -2,11 +2,16 @@
 
 var resetFields = function() {
     $("#howMuch, #what").val("");
-    $("#when").val(iso8601date(new Date()));
+    $("#when").val(formatIso8601date(new Date()));
 };
 
-var iso8601date = function(date) {
+var formatIso8601date = function(date) {
     return pad2(date.getFullYear()) + "-" + pad2(date.getMonth() + 1) + "-" + pad2(date.getDate());
+};
+
+var parseIso8601date = function(str) {
+    var arr = str.split(/-/);
+    return new Date(Date.UTC(arr[0], arr[1]-1, arr[2]));
 };
 
 var pad2 = function(number) {
@@ -69,7 +74,7 @@ var listExpenses = function(target) {
     var table = $('<table/>');
     $.each(expenses, function(i, expense) {
         var tr = $('<tr/>');
-        tr.append($('<td/>').text(iso8601date(new Date(expense.date * 1000))));
+        tr.append($('<td/>').text(formatIso8601date(new Date(expense.date * 1000))));
         tr.append($('<td/>').text(expense.amount / 100));
         tr.append($('<td/>').text(expense.category));
         tr.append($('<td/>').text(expense.text));
@@ -82,7 +87,7 @@ var listExpenses = function(target) {
             $("#howMuch").val(expense.amount / 100);
             $("#category").val(expense.category);
             $("#what").val(expense.text);
-            $("#when").val(iso8601date(new Date(expense.date * 1000)));
+            $("#when").val(formatIso8601date(new Date(expense.date * 1000)));
             listExpenses($("#list"));
         });
         tr.append($('<td/>').append(delLink).append('<span> </span>').append(copyLink));
@@ -104,7 +109,7 @@ $(document).ready(function() {
     $("#add").click(function() {
         addExpense({
             eid: "" + new Date().getTime() + "_" + Math.random(), 
-            date: Date.parse($("#when").val()) / 1000,
+            date: parseIso8601date($("#when").val()).getTime() / 1000,
             amount: parseMoney($("#howMuch").val()),
             category: $("#category").val(),
             text: $("#what").val(),
