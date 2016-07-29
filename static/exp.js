@@ -6,7 +6,7 @@ var resetFields = function() {
 };
 
 var formatIso8601date = function(date) {
-    return pad2(date.getFullYear()) + "-" + pad2(date.getMonth() + 1) + "-" + pad2(date.getDate());
+    return pad2(date.getUTCFullYear()) + "-" + pad2(date.getUTCMonth() + 1) + "-" + pad2(date.getUTCDate());
 };
 
 var parseIso8601date = function(str) {

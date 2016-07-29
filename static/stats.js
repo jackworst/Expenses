@@ -71,7 +71,7 @@ var hideTooltip = function(el, content) {
 };
 
 var daysInMonth = function(month, year) {
-    return 32 - new Date(year, month, 32).getDate();
+    return 32 - new Date(year, month, 32).getUTCDate();
 };
 
 var getUrlParams = function() {
@@ -92,7 +92,7 @@ var formatMoney = function(amount) {
 var computeExpensesTable = function(expenses, year, month) {
     var monthView = month !== undefined;
     var yearView = !monthView;
-    var currentMonth = (year === new Date().getFullYear()) ? new Date().getMonth() : 12;
+    var currentMonth = (year === new Date().getUTCFullYear()) ? new Date().getUTCMonth() : 12;
     var table = [];
     var rowCount = monthView ? daysInMonth(month, year) : 12;
     
@@ -140,7 +140,7 @@ var computeExpensesTable = function(expenses, year, month) {
     // fill in and sum up expenses
     $.each(expenses, function(i, expense) {
         var date = new Date(expense.date * 1000);
-        var row = monthView ? date.getDate() - 1 : date.getMonth();
+        var row = monthView ? date.getUTCDate() - 1 : date.getUTCMonth();
         var col = $.inArray(expense.category, categories);
         var cell = table.rows[row][col];
 
@@ -151,7 +151,7 @@ var computeExpensesTable = function(expenses, year, month) {
 
         table.rowSums[row] += expense.amount;
         table.categorySums[col] += expense.amount;
-        if (yearView && date.getMonth() < currentMonth) {
+        if (yearView && date.getUTCMonth() < currentMonth) {
             table.pastCategorySums[col] += expense.amount;
         }
     });
@@ -218,8 +218,8 @@ $(document).ready(function() {
         year = parseInt(params.year, 10);
     } else {
         // current month
-        year = new Date().getFullYear();
-        month = new Date().getMonth();
+        year = new Date().getUTCFullYear();
+        month = new Date().getUTCMonth();
     }
 
     var url = "/stats/" + encodeURIComponent(year);
