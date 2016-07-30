@@ -2,7 +2,9 @@
 
 var resetFields = function() {
     $("#howMuch, #what").val("");
-    $("#when").val(formatIso8601date(new Date()));
+    var now = new Date();
+    var nowStr = formatIso8601date(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())));
+    $("#when").val(nowStr);
 };
 
 var formatIso8601date = function(date) {
