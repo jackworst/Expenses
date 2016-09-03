@@ -71,7 +71,7 @@ var hideTooltip = function(el, content) {
 };
 
 var daysInMonth = function(month, year) {
-    return 32 - new Date(year, month, 32).getUTCDate();
+    return 32 - new Date(year, month, 32).getDate();
 };
 
 var getUrlParams = function() {
